@@ -3,7 +3,7 @@
     <div class="login-box">
       <div class="login-header">
         <h1>Inventaris Barang</h1>
-        <p>Masuk untuk melanjutkan</p>
+        <p>Login untuk melanjutkan</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="login-form">
@@ -49,7 +49,7 @@
 
         <button type="submit" class="login-button" :disabled="loading">
           <span v-if="loading">Memuat...</span>
-          <span v-else>Masuk</span>
+          <span v-else>Login</span>
         </button>
       </form>
     </div>
