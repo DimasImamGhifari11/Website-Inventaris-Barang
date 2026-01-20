@@ -35,7 +35,7 @@ const handleLogout = () => {
 <style scoped>
 .dashboard {
   min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
   color: #ffffff;
   padding: 20px;
 }
