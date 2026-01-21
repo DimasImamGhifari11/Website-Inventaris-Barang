@@ -587,20 +587,22 @@ thead {
   background: #f5f5f7;
 }
 
-th, td {
+th {
   padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid #e5e5e5;
+  font-weight: 600;
+  color: #1d1d1f;
   white-space: nowrap;
 }
 
-th {
-  font-weight: 600;
-  color: #1d1d1f;
-}
-
 td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #f0f0f0;
   color: #1d1d1f;
+  word-wrap: break-word;
+  word-break: normal;
 }
 
 tbody tr:hover {
