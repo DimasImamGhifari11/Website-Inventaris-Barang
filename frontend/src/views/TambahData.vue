@@ -52,67 +52,58 @@
         <h2>Input Manual</h2>
         <p class="card-description">Tambah data aset satu per satu</p>
 
-        <form @submit.prevent="submitForm" class="asset-form" novalidate>
+        <form @submit.prevent="submitForm" class="asset-form">
           <div class="form-row">
-            <div class="form-group" :class="{ 'has-error': errors.kode_aset }">
+            <div class="form-group">
               <label>Kode Aset</label>
-              <input type="text" v-model="form.kode_aset" @input="clearError('kode_aset')" />
-              <span class="error-message" v-if="errors.kode_aset">{{ errors.kode_aset }}</span>
+              <input type="text" v-model="form.kode_aset" placeholder="" required />
             </div>
-            <div class="form-group" :class="{ 'has-error': errors.kode_barang }">
+            <div class="form-group">
               <label>Kode Barang</label>
-              <input type="text" v-model="form.kode_barang" @input="clearError('kode_barang')" />
-              <span class="error-message" v-if="errors.kode_barang">{{ errors.kode_barang }}</span>
+              <input type="text" v-model="form.kode_barang" placeholder="" required />
             </div>
           </div>
 
-          <div class="form-group" :class="{ 'has-error': errors.nama_aset }">
+          <div class="form-group">
             <label>Nama Aset</label>
-            <input type="text" v-model="form.nama_aset" @input="clearError('nama_aset')" />
-            <span class="error-message" v-if="errors.nama_aset">{{ errors.nama_aset }}</span>
+            <input type="text" v-model="form.nama_aset" placeholder="" required />
           </div>
 
           <div class="form-row">
-            <div class="form-group" :class="{ 'has-error': errors.jenis_aset }">
+            <div class="form-group">
               <label>Jenis Aset</label>
-              <input type="text" v-model="form.jenis_aset" @input="clearError('jenis_aset')" />
-              <span class="error-message" v-if="errors.jenis_aset">{{ errors.jenis_aset }}</span>
+              <input type="text" v-model="form.jenis_aset" placeholder="" required />
             </div>
-            <div class="form-group" :class="{ 'has-error': errors.jumlah }">
+            <div class="form-group">
               <label>Jumlah</label>
-              <input type="number" v-model="form.jumlah" min="1" @input="clearError('jumlah')" />
-              <span class="error-message" v-if="errors.jumlah">{{ errors.jumlah }}</span>
+              <input type="number" v-model="form.jumlah" min="1" placeholder="" required />
             </div>
           </div>
 
           <div class="form-row">
-            <div class="form-group" :class="{ 'has-error': errors.kondisi }">
+            <div class="form-group">
               <label>Kondisi</label>
-              <select v-model="form.kondisi" @change="clearError('kondisi')">
+              <select v-model="form.kondisi" required>
                 <option value="">Pilih Kondisi</option>
                 <option value="Baik">Baik</option>
                 <option value="Rusak Ringan">Rusak Ringan</option>
                 <option value="Rusak Berat">Rusak Berat</option>
               </select>
-              <span class="error-message" v-if="errors.kondisi">{{ errors.kondisi }}</span>
             </div>
-            <div class="form-group" :class="{ 'has-error': errors.tahun_perolehan }">
+            <div class="form-group">
               <label>Tahun Perolehan</label>
-              <input type="number" v-model="form.tahun_perolehan" min="2000" :max="currentYear" @input="clearError('tahun_perolehan')" />
-              <span class="error-message" v-if="errors.tahun_perolehan">{{ errors.tahun_perolehan }}</span>
+              <input type="number" v-model="form.tahun_perolehan" min="2000" :max="currentYear" placeholder="" required />
             </div>
           </div>
 
-          <div class="form-group" :class="{ 'has-error': errors.lokasi_penyimpanan }">
+          <div class="form-group">
             <label>Lokasi Penyimpanan</label>
-            <input type="text" v-model="form.lokasi_penyimpanan" @input="clearError('lokasi_penyimpanan')" />
-            <span class="error-message" v-if="errors.lokasi_penyimpanan">{{ errors.lokasi_penyimpanan }}</span>
+            <input type="text" v-model="form.lokasi_penyimpanan" placeholder="" required />
           </div>
 
-          <div class="form-group" :class="{ 'has-error': errors.penanggung_jawab }">
+          <div class="form-group">
             <label>Penanggung Jawab</label>
-            <input type="text" v-model="form.penanggung_jawab" @input="clearError('penanggung_jawab')" />
-            <span class="error-message" v-if="errors.penanggung_jawab">{{ errors.penanggung_jawab }}</span>
+            <input type="text" v-model="form.penanggung_jawab" placeholder="" required />
           </div>
 
           <button type="submit" class="btn btn-primary" :disabled="submitting">
@@ -155,18 +146,18 @@
           <tbody>
             <tr v-for="(asset, index) in assets" :key="asset.id">
               <td>{{ index + 1 }}</td>
-              <td :title="asset.kode_aset">{{ asset.kode_aset }}</td>
-              <td :title="asset.kode_barang">{{ asset.kode_barang }}</td>
-              <td :title="asset.nama_aset">{{ asset.nama_aset }}</td>
-              <td :title="asset.jenis_aset">{{ asset.jenis_aset }}</td>
+              <td>{{ asset.kode_aset }}</td>
+              <td>{{ asset.kode_barang }}</td>
+              <td>{{ asset.nama_aset }}</td>
+              <td>{{ asset.jenis_aset }}</td>
               <td>{{ asset.jumlah }}</td>
               <td>
                 <span class="badge" :class="getBadgeClass(asset.kondisi)">
                   {{ asset.kondisi }}
                 </span>
               </td>
-              <td :title="asset.lokasi_penyimpanan">{{ asset.lokasi_penyimpanan }}</td>
-              <td :title="asset.penanggung_jawab">{{ asset.penanggung_jawab }}</td>
+              <td>{{ asset.lokasi_penyimpanan }}</td>
+              <td>{{ asset.penanggung_jawab }}</td>
               <td>{{ asset.tahun_perolehan }}</td>
             </tr>
           </tbody>
@@ -227,8 +218,6 @@ const form = ref({
   penanggung_jawab: '',
   tahun_perolehan: currentYear
 })
-
-const errors = ref({})
 
 const notification = ref({
   show: false,
@@ -302,51 +291,26 @@ const readExcelFile = (file) => {
         const workbook = XLSX.read(e.target.result, { type: 'binary' })
         const sheetName = workbook.SheetNames[0]
         const worksheet = workbook.Sheets[sheetName]
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' })
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 })
 
-        console.log('Total rows in Excel:', jsonData.length)
-        console.log('Header:', jsonData[0])
-        console.log('All data:', jsonData)
+        // Skip header row and map to objects
+        const header = jsonData[0]
+        const rows = jsonData.slice(1).filter(row => row.some(cell => cell !== null && cell !== ''))
 
-        // Skip header row and filter non-empty rows
-        const rows = jsonData.slice(1).filter(row => {
-          if (!Array.isArray(row)) return false
-          // Check if at least the first column (kode_aset) has value
-          return row[0] !== undefined && row[0] !== null && row[0] !== ''
-        })
-
-        console.log('Filtered rows:', rows.length)
-
-        const cleanValue = (val) => {
-          if (val === undefined || val === null) return ''
-          const str = String(val).trim()
-          if (str.toLowerCase() === 'nan' || str === '#N/A' || str === '#REF!') return ''
-          return str
-        }
-
-        const mappedData = rows.map((row, index) => {
-          const kodeAset = cleanValue(row[0])
-          const kodeBarang = cleanValue(row[1])
-
-          return {
-            // Auto-generate kode_aset: EGOV01, EGOV02, dst
-            kode_aset: kodeAset || `EGOV${String(index + 1).padStart(2, '0')}`,
-            kode_barang: kodeBarang,
-            nama_aset: cleanValue(row[2]),
-            jenis_aset: cleanValue(row[3]),
-            jumlah: parseInt(row[4]) || 1,
-            kondisi: cleanValue(row[5]) || 'Baik',
-            lokasi_penyimpanan: cleanValue(row[6]) || '-',
-            penanggung_jawab: cleanValue(row[7]) || '-',
-            tahun_perolehan: parseInt(row[8]) || new Date().getFullYear()
-          }
-        })
-
-        console.log('Mapped data:', mappedData)
+        const mappedData = rows.map(row => ({
+          kode_aset: row[0] || '',
+          kode_barang: row[1] || '',
+          nama_aset: row[2] || '',
+          jenis_aset: row[3] || '',
+          jumlah: parseInt(row[4]) || 1,
+          kondisi: row[5] || 'Baik',
+          lokasi_penyimpanan: row[6] || '',
+          penanggung_jawab: row[7] || '',
+          tahun_perolehan: parseInt(row[8]) || new Date().getFullYear()
+        }))
 
         resolve(mappedData)
       } catch (error) {
-        console.error('Excel parse error:', error)
         reject(error)
       }
     }
@@ -356,51 +320,7 @@ const readExcelFile = (file) => {
   })
 }
 
-const validateForm = () => {
-  errors.value = {}
-
-  if (!form.value.kode_aset.trim()) {
-    errors.value.kode_aset = 'Kode Aset harus diisi'
-  }
-  if (!form.value.kode_barang.trim()) {
-    errors.value.kode_barang = 'Kode Barang harus diisi'
-  }
-  if (!form.value.nama_aset.trim()) {
-    errors.value.nama_aset = 'Nama Aset harus diisi'
-  }
-  if (!form.value.jenis_aset.trim()) {
-    errors.value.jenis_aset = 'Jenis Aset harus diisi'
-  }
-  if (!form.value.jumlah || form.value.jumlah < 1) {
-    errors.value.jumlah = 'Jumlah minimal 1'
-  }
-  if (!form.value.kondisi) {
-    errors.value.kondisi = 'Kondisi harus dipilih'
-  }
-  if (!form.value.tahun_perolehan) {
-    errors.value.tahun_perolehan = 'Tahun harus diisi'
-  }
-  if (!form.value.lokasi_penyimpanan.trim()) {
-    errors.value.lokasi_penyimpanan = 'Lokasi harus diisi'
-  }
-  if (!form.value.penanggung_jawab.trim()) {
-    errors.value.penanggung_jawab = 'Penanggung Jawab harus diisi'
-  }
-
-  return Object.keys(errors.value).length === 0
-}
-
-const clearError = (field) => {
-  if (errors.value[field]) {
-    delete errors.value[field]
-  }
-}
-
 const submitForm = async () => {
-  if (!validateForm()) {
-    return
-  }
-
   submitting.value = true
   try {
     await axios.post(`${API_URL}/barang`, form.value)
@@ -598,24 +518,6 @@ onMounted(() => {
   color: #86868b;
 }
 
-/* Error styles */
-.form-group.has-error input,
-.form-group.has-error select {
-  border-color: #ff3b30;
-}
-
-.form-group.has-error input:focus,
-.form-group.has-error select:focus {
-  border-color: #ff3b30;
-  box-shadow: 0 0 0 3px rgba(255, 59, 48, 0.1);
-}
-
-.error-message {
-  font-size: 12px;
-  color: #ff3b30;
-  margin-top: 2px;
-}
-
 /* Buttons */
 .btn {
   display: inline-flex;
@@ -689,14 +591,12 @@ th, td {
   padding: 12px 16px;
   text-align: left;
   border-bottom: 1px solid #e5e5e5;
-  overflow-wrap: break-word;
-  word-break: normal;
+  white-space: nowrap;
 }
 
 th {
   font-weight: 600;
   color: #1d1d1f;
-  white-space: nowrap;
 }
 
 td {
