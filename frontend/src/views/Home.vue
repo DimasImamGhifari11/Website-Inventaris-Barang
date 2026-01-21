@@ -377,4 +377,84 @@ tbody tr:hover {
   font-size: 14px;
   margin: 0;
 }
+
+/* Tablet */
+@media (max-width: 768px) {
+  .data-section {
+    padding: 16px;
+  }
+
+  .section-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .section-header h3 {
+    font-size: 16px;
+    text-align: center;
+  }
+
+  .header-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .search-container {
+    min-width: unset;
+    width: 100%;
+  }
+
+  .btn-download {
+    width: 100%;
+    justify-content: center;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .empty-state {
+    padding: 32px 16px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .data-section {
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .section-header h3 {
+    font-size: 15px;
+  }
+
+  .search-input {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  th, td {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .kondisi-badge {
+    padding: 3px 6px;
+    font-size: 10px;
+  }
+
+  .empty-state {
+    padding: 24px 12px;
+  }
+
+  .empty-state svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .empty-state p {
+    font-size: 13px;
+  }
+}
 </style>

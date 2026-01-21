@@ -1,17 +1,20 @@
 <template>
   <transition name="logout-fade">
   <div class="dashboard" :class="{ 'sidebar-open': sidebarOpen }" v-if="!loggingOut">
+    <!-- Overlay for mobile -->
+    <div class="sidebar-overlay" v-if="sidebarOpen" @click="closeSidebar"></div>
+
     <!-- Sidebar -->
     <aside class="sidebar">
       <nav class="sidebar-nav">
-        <router-link to="/dashboard" class="nav-item" exact-active-class="active">
+        <router-link to="/dashboard" class="nav-item" exact-active-class="active" @click="closeSidebar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
           <span>Home</span>
         </router-link>
-        <router-link to="/dashboard/tambah-data" class="nav-item" active-class="active">
+        <router-link to="/dashboard/tambah-data" class="nav-item" active-class="active" @click="closeSidebar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <line x1="12" y1="8" x2="12" y2="16"></line>
@@ -19,14 +22,14 @@
           </svg>
           <span>Tambah Data Aset</span>
         </router-link>
-        <router-link to="/dashboard/update-data" class="nav-item" active-class="active">
+        <router-link to="/dashboard/update-data" class="nav-item" active-class="active" @click="closeSidebar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
           </svg>
           <span>Update Data Aset</span>
         </router-link>
-        <router-link to="/dashboard/hapus-data" class="nav-item" active-class="active">
+        <router-link to="/dashboard/hapus-data" class="nav-item" active-class="active" @click="closeSidebar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="3 6 5 6 21 6"></polyline>
             <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
@@ -35,7 +38,7 @@
           </svg>
           <span>Hapus Data Aset</span>
         </router-link>
-        <router-link to="/dashboard/riwayat" class="nav-item" active-class="active">
+        <router-link to="/dashboard/riwayat" class="nav-item" active-class="active" @click="closeSidebar">
           <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
@@ -78,6 +81,12 @@ const loggingOut = ref(false)
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value
+}
+
+const closeSidebar = () => {
+  if (window.innerWidth <= 768) {
+    sidebarOpen.value = false
+  }
 }
 
 const handleLogout = () => {
@@ -290,5 +299,95 @@ const handleLogout = () => {
 .logout-fade-leave-to {
   opacity: 0;
   transform: scale(0.98);
+}
+
+/* Sidebar Overlay */
+.sidebar-overlay {
+  display: none;
+}
+
+/* Tablet & Mobile */
+@media (max-width: 768px) {
+  .sidebar-overlay {
+    display: block;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 90;
+    animation: fadeIn 0.3s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    width: 260px !important;
+  }
+
+  .dashboard.sidebar-open .sidebar {
+    transform: translateX(0);
+    width: 260px !important;
+  }
+
+  .main-content {
+    padding: 16px;
+    width: 100%;
+  }
+
+  .dashboard-header {
+    padding: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 14px;
+  }
+
+  .logout-button {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+}
+
+/* Mobile small */
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px;
+  }
+
+  .dashboard-header {
+    padding: 12px;
+  }
+
+  .dashboard-header h1 {
+    font-size: 13px;
+  }
+
+  .header-left {
+    gap: 8px;
+  }
+
+  .hamburger-button {
+    width: 32px;
+    height: 32px;
+  }
+
+  .logout-button {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
 }
 </style>

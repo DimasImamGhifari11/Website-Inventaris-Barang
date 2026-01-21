@@ -708,14 +708,129 @@ tbody tr:hover {
   }
 }
 
-/* Responsive */
+/* Responsive - Tablet */
 @media (max-width: 768px) {
+  .page-container {
+    padding: 16px 0;
+  }
+
+  .page-header h1 {
+    font-size: 20px;
+  }
+
   .content-grid {
     grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .card {
+    padding: 20px;
   }
 
   .form-row {
     grid-template-columns: 1fr;
+  }
+
+  .dropzone {
+    padding: 32px 16px;
+  }
+
+  .table-header {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+
+  .table-header h2 {
+    text-align: center;
+  }
+
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
+
+  th, td {
+    padding: 10px 12px;
+    font-size: 12px;
+  }
+
+  .notification {
+    left: 16px;
+    right: 16px;
+    transform: none;
+  }
+}
+
+/* Responsive - Mobile */
+@media (max-width: 480px) {
+  .page-header {
+    margin-bottom: 16px;
+  }
+
+  .page-header h1 {
+    font-size: 18px;
+  }
+
+  .card {
+    padding: 16px;
+    border-radius: 8px;
+  }
+
+  .card h2 {
+    font-size: 16px;
+  }
+
+  .card-description {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+
+  .dropzone {
+    padding: 24px 12px;
+  }
+
+  .dropzone-content svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .dropzone-content p {
+    font-size: 13px;
+  }
+
+  .form-group input,
+  .form-group select {
+    padding: 12px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .btn {
+    padding: 12px 20px;
+  }
+
+  th, td {
+    padding: 8px 10px;
+    font-size: 11px;
+  }
+
+  .badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+
+  .empty-table {
+    padding: 32px 16px;
+  }
+
+  .empty-table svg {
+    width: 36px;
+    height: 36px;
+  }
+
+  .notification {
+    padding: 12px 16px;
+    font-size: 13px;
   }
 }
 </style>

@@ -319,14 +319,72 @@ const handleLogin = async () => {
   cursor: not-allowed;
 }
 
-@media (max-width: 400px) {
+/* Tablet */
+@media (max-width: 768px) {
+  .login-container {
+    padding: 16px;
+  }
+
+  .notification {
+    top: 16px;
+    left: 16px;
+    right: 16px;
+    transform: none;
+    justify-content: center;
+  }
+
+  .notification-enter-active {
+    animation: slideDownMobile 0.4s ease-out;
+  }
+
+  .notification-leave-active {
+    animation: slideUpMobile 0.3s ease-in;
+  }
+
+  @keyframes slideDownMobile {
+    from {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideUpMobile {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+  }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
   .login-box {
     padding: 32px 24px;
-    margin: 0 16px;
   }
 
   .login-header h1 {
-    font-size: 22px;
+    font-size: 20px;
+  }
+
+  .login-header p {
+    font-size: 13px;
+  }
+
+  .form-group input {
+    padding: 14px;
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+
+  .login-button {
+    padding: 14px;
   }
 }
 </style>
