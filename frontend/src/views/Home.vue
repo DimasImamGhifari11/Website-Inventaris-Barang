@@ -11,11 +11,12 @@
             <input
               type="text"
               v-model="searchQuery"
+              @input="handleSearch"
               placeholder="Cari kode aset, kode barang, atau nama aset..."
               class="search-input"
             />
           </div>
-          <button class="btn-download" @click="downloadExcel" :disabled="barangList.length === 0">
+          <button class="btn-download" @click="downloadExcel" :disabled="pagination.total === 0">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
               <polyline points="7 10 12 15 17 10"></polyline>
@@ -26,44 +27,73 @@
         </div>
       </div>
 
-      <div class="table-container" v-if="filteredBarang.length > 0">
-        <table>
-          <thead>
-            <tr>
-              <th>No</th>
-              <th>Kode Aset</th>
-              <th>Kode Barang</th>
-              <th>Nama Aset</th>
-              <th>Jenis Aset</th>
-              <th>Jumlah</th>
-              <th>Kondisi</th>
-              <th>Lokasi</th>
-              <th>Penanggung Jawab</th>
-              <th>Tahun</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr v-for="(item, index) in filteredBarang" :key="item.id">
-              <td>{{ index + 1 }}</td>
-              <td>{{ item.kode_aset }}</td>
-              <td>{{ item.kode_barang }}</td>
-              <td>{{ item.nama_aset }}</td>
-              <td>{{ item.jenis_aset }}</td>
-              <td>{{ item.jumlah }}</td>
-              <td>
-                <span :class="['kondisi-badge', kondisiClass(item.kondisi)]">
-                  {{ item.kondisi }}
-                </span>
-              </td>
-              <td>{{ item.lokasi_penyimpanan }}</td>
-              <td>{{ item.penanggung_jawab }}</td>
-              <td>{{ item.tahun_perolehan }}</td>
-            </tr>
-          </tbody>
-        </table>
+      <div class="table-container" v-if="barangList.length > 0">
+        <Transition name="fade" mode="out-in">
+          <table :key="tableKey">
+            <thead>
+              <tr>
+                <th>No</th>
+                <th>Kode Aset</th>
+                <th>Kode Barang</th>
+                <th>Nama Aset</th>
+                <th>Jenis Aset</th>
+                <th>Jumlah</th>
+                <th>Kondisi</th>
+                <th>Lokasi</th>
+                <th>Penanggung Jawab</th>
+                <th>Tahun</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr v-for="(item, index) in barangList" :key="item.id">
+                <td>{{ getRowNumber(index) }}</td>
+                <td>{{ item.kode_aset }}</td>
+                <td>{{ item.kode_barang }}</td>
+                <td>{{ item.nama_aset }}</td>
+                <td>{{ item.jenis_aset }}</td>
+                <td>{{ item.jumlah }}</td>
+                <td>
+                  <span :class="['kondisi-badge', kondisiClass(item.kondisi)]">
+                    {{ item.kondisi }}
+                  </span>
+                </td>
+                <td>{{ item.lokasi_penyimpanan }}</td>
+                <td>{{ item.penanggung_jawab }}</td>
+                <td>{{ item.tahun_perolehan }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </Transition>
       </div>
 
-      <div class="empty-state" v-else-if="!loading">
+      <!-- Pagination -->
+      <div class="pagination" v-if="pagination.last_page > 1">
+        <button
+          class="pagination-btn"
+          @click="goToPage(pagination.current_page - 1)"
+          :disabled="pagination.current_page === 1"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          Prev
+        </button>
+        <span class="pagination-info">
+          Page {{ pagination.current_page }} of {{ pagination.last_page }}
+        </span>
+        <button
+          class="pagination-btn"
+          @click="goToPage(pagination.current_page + 1)"
+          :disabled="pagination.current_page === pagination.last_page"
+        >
+          Next
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+          </svg>
+        </button>
+      </div>
+
+      <div class="empty-state" v-if="!loading && barangList.length === 0">
         <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
           <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
@@ -80,29 +110,28 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import * as XLSX from 'xlsx'
 
 const user = ref(null)
 const barangList = ref([])
+const allBarangList = ref([]) // For Excel download
 const searchQuery = ref('')
 const loading = ref(true)
+const searchTimeout = ref(null)
+const tableKey = ref(0)
 
-const filteredBarang = computed(() => {
-  if (!searchQuery.value) {
-    return barangList.value
-  }
-
-  const query = searchQuery.value.toLowerCase()
-  return barangList.value.filter(item => {
-    return (
-      item.kode_aset?.toLowerCase().includes(query) ||
-      item.kode_barang?.toLowerCase().includes(query) ||
-      item.nama_aset?.toLowerCase().includes(query)
-    )
-  })
+const pagination = ref({
+  current_page: 1,
+  last_page: 1,
+  per_page: 10,
+  total: 0
 })
+
+const getRowNumber = (index) => {
+  return (pagination.value.current_page - 1) * pagination.value.per_page + index + 1
+}
 
 const kondisiClass = (kondisi) => {
   if (kondisi === 'Baik') return 'kondisi-baik'
@@ -111,11 +140,18 @@ const kondisiClass = (kondisi) => {
   return ''
 }
 
-const fetchBarang = async () => {
+const fetchBarang = async (page = 1) => {
   loading.value = true
   try {
-    const response = await axios.get('http://localhost:8000/api/barang')
+    let url = `http://localhost:8000/api/barang?page=${page}&per_page=10`
+    if (searchQuery.value) {
+      url += `&search=${encodeURIComponent(searchQuery.value)}`
+    }
+    const response = await axios.get(url)
     barangList.value = response.data.data || []
+    if (response.data.pagination) {
+      pagination.value = response.data.pagination
+    }
   } catch (error) {
     console.error('Error fetching data:', error)
   } finally {
@@ -123,8 +159,35 @@ const fetchBarang = async () => {
   }
 }
 
-const downloadExcel = () => {
-  const data = barangList.value.map((item, index) => ({
+const fetchAllBarang = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/api/barang?per_page=1000')
+    allBarangList.value = response.data.data || []
+  } catch (error) {
+    console.error('Error fetching all data:', error)
+  }
+}
+
+const handleSearch = () => {
+  clearTimeout(searchTimeout.value)
+  searchTimeout.value = setTimeout(() => {
+    tableKey.value++
+    fetchBarang(1)
+  }, 300)
+}
+
+const goToPage = (page) => {
+  if (page >= 1 && page <= pagination.value.last_page) {
+    tableKey.value++
+    fetchBarang(page)
+  }
+}
+
+const downloadExcel = async () => {
+  // Fetch all data first for complete export
+  await fetchAllBarang()
+
+  const data = allBarangList.value.map((item, index) => ({
     'No': index + 1,
     'Kode Aset': item.kode_aset,
     'Kode Barang': item.kode_barang,
@@ -141,18 +204,17 @@ const downloadExcel = () => {
   const workbook = XLSX.utils.book_new()
   XLSX.utils.book_append_sheet(workbook, worksheet, 'Data Inventaris')
 
-  // Auto-size columns
   const colWidths = [
-    { wch: 5 },   // No
-    { wch: 15 },  // Kode Aset
-    { wch: 20 },  // Kode Barang
-    { wch: 40 },  // Nama Aset
-    { wch: 15 },  // Jenis Aset
-    { wch: 8 },   // Jumlah
-    { wch: 12 },  // Kondisi
-    { wch: 25 },  // Lokasi Penyimpanan
-    { wch: 20 },  // Penanggung Jawab
-    { wch: 15 }   // Tahun Perolehan
+    { wch: 5 },
+    { wch: 15 },
+    { wch: 20 },
+    { wch: 40 },
+    { wch: 15 },
+    { wch: 8 },
+    { wch: 12 },
+    { wch: 25 },
+    { wch: 20 },
+    { wch: 15 }
   ]
   worksheet['!cols'] = colWidths
 
@@ -171,31 +233,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.page-container {
-  padding: 24px 0;
-}
-
-.welcome-card {
-  background: #ffffff;
-  border-radius: 12px;
-  border: 1px solid #e5e5e5;
-  padding: 32px;
-  margin-bottom: 24px;
-}
-
-.welcome-card h2 {
-  margin: 0 0 8px 0;
-  font-size: 20px;
-  font-weight: 600;
-  color: #1d1d1f;
-}
-
-.welcome-card p {
-  margin: 0;
-  font-size: 14px;
-  color: #86868b;
-}
-
 .data-section {
   background: #ffffff;
   border-radius: 12px;
@@ -290,6 +327,18 @@ onMounted(() => {
 
 .table-container {
   overflow-x: auto;
+  overflow-y: hidden;
+}
+
+/* Table Pagination Transitions */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 table {
@@ -345,6 +394,55 @@ tbody tr:hover {
 .kondisi-berat {
   background: #f8d7da;
   color: #721c24;
+}
+
+/* Pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid #e5e5e5;
+}
+
+.pagination-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #f5f5f7;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #1d1d1f;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+  background: #e5e5e5;
+}
+
+.pagination-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-btn svg {
+  flex-shrink: 0;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #86868b;
+  font-weight: 500;
 }
 
 .empty-state {
@@ -414,6 +512,19 @@ tbody tr:hover {
     font-size: 12px;
   }
 
+  .pagination {
+    gap: 12px;
+  }
+
+  .pagination-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+
+  .pagination-info {
+    font-size: 13px;
+  }
+
   .empty-state {
     padding: 32px 16px;
   }
@@ -431,7 +542,7 @@ tbody tr:hover {
   }
 
   .search-input {
-    font-size: 16px; /* Prevent zoom on iOS */
+    font-size: 16px;
   }
 
   th, td {
@@ -442,6 +553,23 @@ tbody tr:hover {
   .kondisi-badge {
     padding: 3px 6px;
     font-size: 10px;
+  }
+
+  .pagination {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .pagination-btn {
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .pagination-info {
+    font-size: 12px;
+    width: 100%;
+    text-align: center;
+    order: -1;
   }
 
   .empty-state {

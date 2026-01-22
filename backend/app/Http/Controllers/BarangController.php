@@ -8,13 +8,32 @@ use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $barang = Barang::orderBy('created_at', 'desc')->get();
+        $perPage = $request->query('per_page', 10);
+        $search = $request->query('search');
+
+        $query = Barang::orderBy('kode_aset', 'asc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('kode_aset', 'like', "%{$search}%")
+                  ->orWhere('kode_barang', 'like', "%{$search}%")
+                  ->orWhere('nama_aset', 'like', "%{$search}%");
+            });
+        }
+
+        $barang = $query->paginate($perPage);
 
         return response()->json([
             'success' => true,
-            'data' => $barang
+            'data' => $barang->items(),
+            'pagination' => [
+                'current_page' => $barang->currentPage(),
+                'last_page' => $barang->lastPage(),
+                'per_page' => $barang->perPage(),
+                'total' => $barang->total(),
+            ]
         ]);
     }
 
