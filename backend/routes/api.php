@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\RiwayatController;
 
 Route::get('/test', function () {
     return response()->json([
@@ -54,3 +55,6 @@ Route::get('/barang/{id}', [BarangController::class, 'show']);
 Route::put('/barang/{id}', [BarangController::class, 'update']);
 Route::delete('/barang/{id}', [BarangController::class, 'destroy']);
 Route::post('/barang/import', [BarangController::class, 'import']);
+
+// Riwayat Routes
+Route::get('/riwayat', [RiwayatController::class, 'index']);

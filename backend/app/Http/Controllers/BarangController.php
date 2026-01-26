@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barang;
+use App\Models\Riwayat;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -60,6 +61,16 @@ class BarangController extends Controller
 
         $barang = Barang::create($request->all());
 
+        // Log riwayat tambah data
+        Riwayat::create([
+            'kode_barang' => $barang->kode_barang,
+            'nama_aset' => $barang->nama_aset,
+            'perubahan' => 'Tambah Data',
+            'stok_sebelum' => 0,
+            'stok_sesudah' => $barang->jumlah,
+            'keterangan' => $barang->keterangan ?? null,
+        ]);
+
         return response()->json([
             'success' => true,
             'message' => 'Data berhasil disimpan',
@@ -114,7 +125,34 @@ class BarangController extends Controller
             ], 422);
         }
 
+        // Simpan data sebelum update untuk riwayat
+        $stokSebelum = $barang->jumlah;
+        $namaAsetLama = $barang->nama_aset;
+        $kodeBarangLama = $barang->kode_barang;
+
         $barang->update($request->all());
+
+        // Tentukan jenis perubahan
+        $stokSesudah = $barang->jumlah;
+        $selisihStok = $stokSesudah - $stokSebelum;
+
+        if ($stokSebelum != $stokSesudah) {
+            // Stok berubah
+            $tanda = $selisihStok > 0 ? '+' : '';
+            $perubahan = "Edit Stok ({$tanda}{$selisihStok})";
+        } else {
+            $perubahan = 'Edit Data';
+        }
+
+        // Log riwayat update
+        Riwayat::create([
+            'kode_barang' => $barang->kode_barang,
+            'nama_aset' => $barang->nama_aset,
+            'perubahan' => $perubahan,
+            'stok_sebelum' => $stokSebelum,
+            'stok_sesudah' => $stokSesudah,
+            'keterangan' => $request->keterangan ?? null,
+        ]);
 
         return response()->json([
             'success' => true,
@@ -133,6 +171,16 @@ class BarangController extends Controller
                 'message' => 'Data tidak ditemukan'
             ], 404);
         }
+
+        // Log riwayat hapus data sebelum dihapus
+        Riwayat::create([
+            'kode_barang' => $barang->kode_barang,
+            'nama_aset' => $barang->nama_aset,
+            'perubahan' => 'Hapus Data',
+            'stok_sebelum' => $barang->jumlah,
+            'stok_sesudah' => 0,
+            'keterangan' => null,
+        ]);
 
         $barang->delete();
 
@@ -163,7 +211,7 @@ class BarangController extends Controller
 
         foreach ($request->data as $index => $row) {
             try {
-                Barang::create([
+                $barang = Barang::create([
                     'kode_aset' => $row['kode_aset'] ?? '',
                     'kode_barang' => $row['kode_barang'] ?? '',
                     'nama_aset' => $row['nama_aset'] ?? '',
@@ -174,6 +222,17 @@ class BarangController extends Controller
                     'penanggung_jawab' => $row['penanggung_jawab'] ?? '',
                     'tahun_perolehan' => (int)($row['tahun_perolehan'] ?? date('Y')),
                 ]);
+
+                // Log riwayat import
+                Riwayat::create([
+                    'kode_barang' => $barang->kode_barang,
+                    'nama_aset' => $barang->nama_aset,
+                    'perubahan' => 'Tambah Data (Import)',
+                    'stok_sebelum' => 0,
+                    'stok_sesudah' => $barang->jumlah,
+                    'keterangan' => 'Import dari Excel',
+                ]);
+
                 $count++;
             } catch (\Exception $e) {
                 $errors[] = "Baris " . ($index + 1) . ": " . $e->getMessage();
