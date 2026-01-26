@@ -114,6 +114,37 @@ Akses aplikasi di `http://localhost:5173`
 - `per_page` - Data per halaman (default: 10)
 - `search` - Kata kunci pencarian
 
+## Testing
+
+### Menjalankan Unit Test (PHPUnit)
+
+```bash
+cd backend
+php artisan test
+```
+
+Atau untuk menjalankan test dengan detail:
+```bash
+php artisan test --verbose
+```
+
+Menjalankan test spesifik:
+```bash
+php artisan test --filter=BarangTest
+```
+
+### Test Cases
+
+Total 30 White Box Test Cases:
+- CREATE Positive: 5 tests
+- CREATE Negative: 5 tests
+- READ Positive: 5 tests
+- UPDATE Positive: 5 tests
+- UPDATE Negative: 5 tests
+- DELETE Positive: 5 tests
+
+Lihat file `TEST_CASES.md` untuk dokumentasi lengkap test cases.
+
 ## Format Excel untuk Import
 
 | Kode Aset | Kode Barang | Nama Aset | Jenis Aset | Jumlah | Kondisi | Lokasi | Penanggung Jawab | Tahun |
