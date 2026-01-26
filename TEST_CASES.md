@@ -101,6 +101,11 @@
 | 3 | BB-BV-03 | tahun_perolehan | Minimum valid | 2000 | Data tersimpan | |
 | 4 | BB-BV-04 | tahun_perolehan | Below minimum | 1999 | Validasi error | |
 | 5 | BB-BV-05 | kode_aset | Empty string | "" | Validasi error (required) | |
+| 6 | BB-BV-06 | jumlah | Negative value | -1 | Validasi error | |
+| 7 | BB-BV-07 | tahun_perolehan | Maximum valid | Tahun sekarang | Data tersimpan | |
+| 8 | BB-BV-08 | tahun_perolehan | Above maximum | Tahun depan | Validasi error | |
+| 9 | BB-BV-09 | nama_aset | Minimum length | 1 karakter | Data tersimpan | |
+| 10 | BB-BV-10 | nama_aset | Maximum length | 255 karakter | Data tersimpan | |
 
 ---
 
@@ -118,9 +123,9 @@
 | **Subtotal White Box** | **30** |
 | **BLACK BOX TESTING** | |
 | Functional Testing | 5 |
-| Boundary Value Analysis | 5 |
-| **Subtotal Black Box** | **10** |
-| **TOTAL** | **40** |
+| Boundary Value Analysis | 10 |
+| **Subtotal Black Box** | **15** |
+| **TOTAL** | **45** |
 
 ---
 
