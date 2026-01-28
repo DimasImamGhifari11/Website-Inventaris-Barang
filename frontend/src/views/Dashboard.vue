@@ -215,7 +215,7 @@ const handleLogout = () => {
 .toggle-track {
   width: 44px;
   height: 24px;
-  background: #e5e5e5;
+  background: var(--border-color);
   border-radius: 12px;
   position: relative;
   transition: background 0.3s ease;
@@ -232,7 +232,7 @@ const handleLogout = () => {
   left: 2px;
   width: 20px;
   height: 20px;
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -246,7 +246,7 @@ const handleLogout = () => {
 }
 
 .toggle-thumb svg {
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .toggle-track.active .toggle-thumb svg {
@@ -256,7 +256,7 @@ const handleLogout = () => {
 .toggle-label {
   font-size: 13px;
   font-weight: 500;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .nav-item {
@@ -391,8 +391,8 @@ const handleLogout = () => {
 }
 
 .logout-button {
-  background: #1d1d1f;
-  color: #ffffff;
+  background: var(--text-primary);
+  color: var(--bg-card);
   border: none;
   border-radius: 8px;
   padding: 10px 20px;

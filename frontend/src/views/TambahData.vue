@@ -522,7 +522,7 @@ onMounted(() => {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .content-grid {
@@ -533,9 +533,9 @@ onMounted(() => {
 }
 
 .card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 12px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border-color);
   padding: 24px;
 }
 
@@ -543,18 +543,18 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .card-description {
   margin: 0 0 20px 0;
   font-size: 14px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 /* Dropzone */
 .dropzone {
-  border: 2px dashed #e5e5e5;
+  border: 2px dashed var(--border-color);
   border-radius: 12px;
   padding: 40px 24px;
   text-align: center;
@@ -565,7 +565,7 @@ onMounted(() => {
 
 .dropzone:hover {
   border-color: #0071e3;
-  background: #f5f5f7;
+  background: var(--bg-primary);
 }
 
 .dropzone-active {
@@ -583,7 +583,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .dropzone-content svg {
@@ -601,13 +601,13 @@ onMounted(() => {
 }
 
 .dropzone-content .file-name {
-  color: #1d1d1f;
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 .file-hint {
   font-size: 12px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 /* Form */
@@ -632,17 +632,17 @@ onMounted(() => {
 .form-group label {
   font-size: 13px;
   font-weight: 500;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .form-group input,
 .form-group select {
   padding: 10px 14px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s ease;
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 .form-group input:focus,
@@ -653,7 +653,7 @@ onMounted(() => {
 }
 
 .form-group input::placeholder {
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 /* Buttons */
@@ -681,18 +681,18 @@ onMounted(() => {
 }
 
 .btn-primary:disabled {
-  background: #86868b;
+  background: var(--text-secondary);
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background: #f5f5f7;
-  color: #1d1d1f;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: #e5e5e5;
+  background: var(--border-color);
 }
 
 /* Table */
@@ -715,15 +715,15 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #f5f5f7;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   padding: 8px 12px;
   min-width: 300px;
 }
 
 .search-container svg {
-  color: #86868b;
+  color: var(--text-secondary);
   flex-shrink: 0;
 }
 
@@ -733,11 +733,11 @@ onMounted(() => {
   outline: none;
   font-size: 14px;
   width: 100%;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .search-input::placeholder {
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .table-container {
@@ -751,29 +751,29 @@ table {
 }
 
 thead {
-  background: #f5f5f7;
+  background: var(--bg-primary);
 }
 
 th {
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid #e5e5e5;
+  border-bottom: 1px solid var(--border-color);
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
 td {
   padding: 12px 16px;
   text-align: left;
-  border-bottom: 1px solid #f0f0f0;
-  color: #1d1d1f;
+  border-bottom: 1px solid var(--border-light);
+  color: var(--text-primary);
   word-wrap: break-word;
   word-break: normal;
 }
 
 tbody tr:hover {
-  background: #f5f5f7;
+  background: var(--bg-primary);
 }
 
 .badge {
@@ -809,7 +809,7 @@ tbody tr:hover {
   align-items: center;
   justify-content: center;
   padding: 48px;
-  color: #86868b;
+  color: var(--text-secondary);
   gap: 12px;
 }
 
@@ -826,7 +826,7 @@ tbody tr:hover {
   display: flex;
   justify-content: center;
   padding: 48px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .loading-state p {
@@ -842,7 +842,7 @@ tbody tr:hover {
   gap: 16px;
   margin-top: 20px;
   padding-top: 20px;
-  border-top: 1px solid #e5e5e5;
+  border-top: 1px solid var(--border-color);
 }
 
 .pagination-btn {
@@ -850,18 +850,18 @@ tbody tr:hover {
   align-items: center;
   gap: 6px;
   padding: 8px 16px;
-  background: #f5f5f7;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #1d1d1f;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: #e5e5e5;
+  background: var(--border-color);
 }
 
 .pagination-btn:active:not(:disabled) {
@@ -879,7 +879,7 @@ tbody tr:hover {
 
 .pagination-info {
   font-size: 14px;
-  color: #86868b;
+  color: var(--text-secondary);
   font-weight: 500;
 }
 
@@ -900,8 +900,8 @@ tbody tr:hover {
   top: 32px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 14px 24px;
   display: flex;
@@ -910,7 +910,7 @@ tbody tr:hover {
   font-size: 14px;
   font-weight: 500;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .notification.success {

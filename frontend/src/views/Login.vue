@@ -296,8 +296,8 @@ const handleLogin = async () => {
 }
 
 .login-button {
-  background: #1d1d1f;
-  color: #ffffff;
+  background: var(--text-primary);
+  color: var(--bg-primary);
   border: none;
   border-radius: 8px;
   padding: 12px;

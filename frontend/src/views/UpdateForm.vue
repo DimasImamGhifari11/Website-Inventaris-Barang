@@ -271,7 +271,7 @@ onMounted(() => {
   margin: 0;
   font-size: 24px;
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .btn-back {
@@ -279,18 +279,18 @@ onMounted(() => {
   align-items: center;
   gap: 4px;
   padding: 8px 12px;
-  background: #f5f5f7;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
-  color: #1d1d1f;
+  color: var(--text-primary);
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .btn-back:hover {
-  background: #e5e5e5;
+  background: var(--border-color);
 }
 
 .btn-back:active {
@@ -298,9 +298,9 @@ onMounted(() => {
 }
 
 .card {
-  background: #ffffff;
+  background: var(--bg-card);
   border-radius: 12px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border-color);
   padding: 24px;
 }
 
@@ -308,13 +308,13 @@ onMounted(() => {
   margin: 0 0 4px 0;
   font-size: 18px;
   font-weight: 600;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .card-description {
   margin: 0 0 24px 0;
   font-size: 14px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 /* Form */
@@ -339,18 +339,18 @@ onMounted(() => {
 .form-group label {
   font-size: 13px;
   font-weight: 500;
-  color: #1d1d1f;
+  color: var(--text-primary);
 }
 
 .form-group input,
 .form-group select,
 .form-group textarea {
   padding: 10px 14px;
-  border: 1px solid #e5e5e5;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   transition: all 0.2s ease;
-  background: #ffffff;
+  background: var(--bg-card);
 }
 
 .form-group textarea {
@@ -369,12 +369,12 @@ onMounted(() => {
 
 .form-group input::placeholder,
 .form-group textarea::placeholder {
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .form-hint {
   font-size: 12px;
-  color: #86868b;
+  color: var(--text-secondary);
   margin-top: 4px;
 }
 
@@ -410,18 +410,18 @@ onMounted(() => {
 }
 
 .btn-primary:disabled {
-  background: #86868b;
+  background: var(--text-secondary);
   cursor: not-allowed;
 }
 
 .btn-secondary {
-  background: #f5f5f7;
-  color: #1d1d1f;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: #e5e5e5;
+  background: var(--border-color);
 }
 
 /* States */
@@ -429,7 +429,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   padding: 48px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .loading-state p {
@@ -444,7 +444,7 @@ onMounted(() => {
   justify-content: center;
   padding: 48px;
   gap: 16px;
-  color: #86868b;
+  color: var(--text-secondary);
 }
 
 .empty-state svg {
@@ -462,8 +462,8 @@ onMounted(() => {
   top: 32px;
   left: 50%;
   transform: translateX(-50%);
-  background: #ffffff;
-  border: 1px solid #e5e5e5;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 14px 24px;
   display: flex;
@@ -472,7 +472,7 @@ onMounted(() => {
   font-size: 14px;
   font-weight: 500;
   z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px var(--shadow-color);
 }
 
 .notification.success {
