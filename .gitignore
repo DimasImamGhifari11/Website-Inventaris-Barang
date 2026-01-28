@@ -29,6 +29,8 @@ build/
 *.sqlite-journal
 
 # Manual Book Files
+Manual Book.css
+Manual Book.html
 manual_style.css
 manual_style_sans_serif.css
 User_Manual.html
