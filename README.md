@@ -117,6 +117,71 @@ Akses aplikasi di `http://localhost:5173`
 - `per_page` - Data per halaman (default: 10)
 - `search` - Kata kunci pencarian
 
+## Struktur Project
+
+```
+Inventaris-Barang/
+├─ backend/                          # Laravel 12 (REST API)
+│  ├─ app/
+│  │  ├─ Http/
+│  │  │  └─ Controllers/
+│  │  │     ├─ BarangController.php  # CRUD + import barang + log riwayat
+│  │  │     └─ RiwayatController.php # List riwayat aktivitas
+│  │  ├─ Models/
+│  │  │  ├─ Barang.php
+│  │  │  ├─ Riwayat.php
+│  │  │  └─ User.php
+│  │  └─ Providers/
+│  ├─ database/
+│  │  ├─ migrations/                 # Skema tabel (barang, riwayat, peminjaman, dll)
+│  │  ├─ seeders/
+│  │  └─ factories/
+│  ├─ routes/
+│  │  ├─ api.php                     # Endpoint API utama
+│  │  ├─ web.php
+│  │  └─ console.php
+│  ├─ config/
+│  ├─ public/
+│  ├─ resources/                     # Asset/view Laravel (default)
+│  ├─ storage/
+│  ├─ tests/                         # Unit/Feature tests + coverage
+│  ├─ composer.json
+│  └─ .env
+│
+├─ frontend/                         # Vue 3 + Vite (SPA)
+│  ├─ src/
+│  │  ├─ views/                      # Halaman (router pages)
+│  │  │  ├─ Login.vue
+│  │  │  ├─ Dashboard.vue
+│  │  │  ├─ Home.vue
+│  │  │  ├─ TambahData.vue
+│  │  │  ├─ UpdateData.vue
+│  │  │  ├─ UpdateForm.vue
+│  │  │  ├─ HapusData.vue
+│  │  │  ├─ Riwayat.vue
+│  │  │  └─ GenerateLabel.vue
+│  │  ├─ router/
+│  │  │  └─ index.js                  # Routing + route guard (cek token)
+│  │  ├─ components/
+│  │  │  └─ HelloWorld.vue            # Komponen contoh (default)
+│  │  ├─ assets/
+│  │  ├─ api.js                       # Axios instance (baseURL dari VITE_API_URL)
+│  │  ├─ App.vue
+│  │  └─ main.js
+│  ├─ public/
+│  ├─ dist/                           # Hasil build (muncul setelah build)
+│  ├─ vite.config.js
+│  ├─ package.json
+│  ├─ .env
+│  ├─ .env.development
+│  └─ .env.production
+│
+├─ README.md
+├─ TEST_CASES.md
+├─ Manual Book.html
+└─ Manual Book.css
+```
+
 ## Testing
 
 ### Menjalankan Unit Test (PHPUnit)
