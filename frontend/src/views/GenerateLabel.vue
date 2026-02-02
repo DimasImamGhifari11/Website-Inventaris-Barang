@@ -316,7 +316,7 @@ const generateLabelPNG = (kodeBarang, tahunPengadaan) => {
   const ctx = canvas.getContext('2d')
 
   canvas.width = 400
-  canvas.height = 120
+  canvas.height = 110
 
   // Background
   ctx.fillStyle = '#ffffff'
@@ -329,23 +329,23 @@ const generateLabelPNG = (kodeBarang, tahunPengadaan) => {
 
   // Kode Barang (top, bold, large)
   ctx.fillStyle = '#000000'
-  ctx.font = 'bold 28px Arial, sans-serif'
+  ctx.font = 'bold 26px Arial, sans-serif'
   ctx.textAlign = 'center'
   ctx.textBaseline = 'middle'
-  ctx.fillText(kodeBarang, canvas.width / 2, 40)
+  ctx.fillText(kodeBarang, canvas.width / 2, 32)
 
   // Divider line
   ctx.strokeStyle = '#cccccc'
   ctx.lineWidth = 1
   ctx.beginPath()
-  ctx.moveTo(40, 65)
-  ctx.lineTo(canvas.width - 40, 65)
+  ctx.moveTo(40, 54)
+  ctx.lineTo(canvas.width - 40, 54)
   ctx.stroke()
 
   // Tahun Pengadaan (bottom, medium)
   ctx.fillStyle = '#333333'
-  ctx.font = 'bold 22px Arial, sans-serif'
-  ctx.fillText('Tahun: ' + tahunPengadaan, canvas.width / 2, 92)
+  ctx.font = 'bold 20px Arial, sans-serif'
+  ctx.fillText('Tahun: ' + tahunPengadaan, canvas.width / 2, 78)
 
   return canvas.toDataURL('image/png')
 }
