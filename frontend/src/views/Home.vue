@@ -22,7 +22,7 @@
       <h3>Kondisi Barang</h3>
       <div class="chart-content">
         <div class="donut-wrapper">
-          <div class="donut" :style="donutStyle">
+          <div class="donut" :style="{ '--donut-bg': donutBg, '--donut-progress': donutProgress + '%' }">
             <div class="donut-hole">
               <span class="donut-total">{{ totalAset }}</span>
               <span class="donut-total-label">Total</span>
@@ -227,27 +227,39 @@ const kondisiColors = {
   'Rusak Berat': '#ff3b30'
 }
 
-const donutStyle = computed(() => {
+const donutProgress = ref(0)
+
+const donutBg = computed(() => {
   const total = totalAset.value
   const baik = kondisiData.value['Baik']
   const ringan = kondisiData.value['Rusak Ringan']
   const berat = kondisiData.value['Rusak Berat']
 
   if (!total || (baik === 0 && ringan === 0 && berat === 0)) {
-    return { background: 'conic-gradient(#e0e0e0 0% 100%)' }
+    return 'conic-gradient(#e0e0e0 0% 100%)'
   }
 
   const pBaik = (baik / total) * 100
   const pRingan = (ringan / total) * 100
 
-  return {
-    background: `conic-gradient(
-      ${kondisiColors['Baik']} 0% ${pBaik}%,
-      ${kondisiColors['Rusak Ringan']} ${pBaik}% ${pBaik + pRingan}%,
-      ${kondisiColors['Rusak Berat']} ${pBaik + pRingan}% 100%
-    )`
-  }
+  return `conic-gradient(
+    ${kondisiColors['Baik']} 0% ${pBaik}%,
+    ${kondisiColors['Rusak Ringan']} ${pBaik}% ${pBaik + pRingan}%,
+    ${kondisiColors['Rusak Berat']} ${pBaik + pRingan}% 100%
+  )`
 })
+
+const animateDonut = () => {
+  const duration = 1200
+  const start = performance.now()
+  const step = (now) => {
+    const elapsed = now - start
+    const t = Math.min(elapsed / duration, 1)
+    donutProgress.value = (1 - Math.pow(1 - t, 3)) * 100
+    if (t < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
 
 const getPercentage = (value) => {
   if (!totalAset.value) return 0
@@ -259,6 +271,7 @@ const fetchStatistik = async () => {
     const response = await api.get('/statistik')
     totalAset.value = response.data.data.total_aset
     kondisiData.value = response.data.data.kondisi
+    animateDonut()
   } catch (error) {
     console.error('Error fetching statistik:', error)
   }
@@ -450,6 +463,16 @@ onMounted(() => {
   justify-content: center;
 }
 
+.donut::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--donut-bg);
+  -webkit-mask: conic-gradient(black 0% var(--donut-progress), transparent var(--donut-progress) 100%);
+  mask: conic-gradient(black 0% var(--donut-progress), transparent var(--donut-progress) 100%);
+}
+
 .donut-hole {
   width: 110px;
   height: 110px;
@@ -460,6 +483,8 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   gap: 2px;
+  position: relative;
+  z-index: 1;
 }
 
 .donut-total {
