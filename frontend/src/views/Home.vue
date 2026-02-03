@@ -12,7 +12,7 @@
         </div>
         <div class="stat-info">
           <span class="stat-label">Total Aset</span>
-          <span class="stat-value">{{ totalAset }}</span>
+          <span class="stat-value">{{ displayTotal }}</span>
         </div>
       </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="donut-wrapper">
           <div class="donut" :style="{ '--donut-bg': donutBg, '--donut-progress': donutProgress + '%' }">
             <div class="donut-hole">
-              <span class="donut-total">{{ totalAset }}</span>
+              <span class="donut-total">{{ displayTotal }}</span>
               <span class="donut-total-label">Total</span>
             </div>
           </div>
@@ -182,6 +182,7 @@ import * as XLSX from 'xlsx'
 
 const user = ref(null)
 const totalAset = ref(0)
+const displayTotal = ref(0)
 const kondisiData = ref({ 'Baik': 0, 'Rusak Ringan': 0, 'Rusak Berat': 0 })
 const barangList = ref([])
 const allBarangList = ref([]) // For Excel download
@@ -251,11 +252,14 @@ const donutBg = computed(() => {
 
 const animateDonut = () => {
   const duration = 1200
+  const target = totalAset.value
   const start = performance.now()
   const step = (now) => {
     const elapsed = now - start
     const t = Math.min(elapsed / duration, 1)
-    donutProgress.value = (1 - Math.pow(1 - t, 3)) * 100
+    const ease = 1 - Math.pow(1 - t, 3)
+    donutProgress.value = ease * 100
+    displayTotal.value = Math.round(ease * target)
     if (t < 1) requestAnimationFrame(step)
   }
   requestAnimationFrame(step)
