@@ -4,9 +4,9 @@ Aplikasi pengelolaan data inventaris barang untuk Dinas Komunikasi Informatika d
 
 ## Tech Stack
 
-**Backend:** Laravel 12, PHP 8.2+, MySQL
+**Backend:** Laravel 12.47.0, PHP 8.2.12, MySQL, Laravel Sanctum 4.2.4
 
-**Frontend:** Vue.js 3, Vue Router, Axios, SheetJS
+**Frontend:** Vue.js 3.5.27, Vue Router 4.6.4, Vite 7.2.5, Axios 1.13.2, SheetJS 0.18.5
 
 ## Fitur
 
