@@ -431,7 +431,7 @@ onMounted(() => {
 <style scoped>
 .stats-section {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
   margin-bottom: 24px;
 }
@@ -439,11 +439,12 @@ onMounted(() => {
 .stat-card {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  padding: 20px 24px;
+  padding: 24px;
   transition: box-shadow 0.2s ease;
 }
 
@@ -1031,12 +1032,14 @@ tbody tr:hover {
 /* Mobile */
 @media (max-width: 480px) {
   .stats-section {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
 
   .stat-card {
-    padding: 14px 16px;
+    padding: 16px;
     gap: 12px;
+    flex-direction: column;
+    text-align: center;
   }
 
   .stat-icon {
