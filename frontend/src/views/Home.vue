@@ -40,6 +40,18 @@
           <span class="stat-value">{{ displayTotalAktivitas }}</span>
         </div>
       </div>
+      <div class="stat-card">
+        <div class="stat-icon stat-icon-baik">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div class="stat-info">
+          <span class="stat-label">Kondisi Baik</span>
+          <span class="stat-value">{{ displayKondisiBaik }}</span>
+        </div>
+      </div>
     </div>
 
     <!-- Donut Chart Kondisi -->
@@ -212,6 +224,7 @@ const totalAktivitas = ref(0)
 const displayTotal = ref(0)
 const displayTotalUnit = ref(0)
 const displayTotalAktivitas = ref(0)
+const displayKondisiBaik = ref(0)
 const kondisiData = ref({ 'Baik': 0, 'Rusak Ringan': 0, 'Rusak Berat': 0 })
 const barangList = ref([])
 const allBarangList = ref([]) // For Excel download
@@ -284,6 +297,7 @@ const animateDonut = () => {
   const targetTotal = totalAset.value
   const targetUnit = totalUnit.value
   const targetAktivitas = totalAktivitas.value
+  const targetBaik = kondisiData.value['Baik']
   const start = performance.now()
   const step = (now) => {
     const elapsed = now - start
@@ -293,6 +307,7 @@ const animateDonut = () => {
     displayTotal.value = Math.round(ease * targetTotal)
     displayTotalUnit.value = Math.round(ease * targetUnit)
     displayTotalAktivitas.value = Math.round(ease * targetAktivitas)
+    displayKondisiBaik.value = Math.round(ease * targetBaik)
     if (t < 1) requestAnimationFrame(step)
   }
   requestAnimationFrame(step)
@@ -456,6 +471,11 @@ onMounted(() => {
 .stat-icon-aktivitas {
   background: #fff3e0;
   color: #ff9500;
+}
+
+.stat-icon-baik {
+  background: #e8faf0;
+  color: #34c759;
 }
 
 .stat-info {
