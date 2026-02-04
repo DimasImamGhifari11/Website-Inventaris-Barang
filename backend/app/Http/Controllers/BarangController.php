@@ -235,21 +235,14 @@ class BarangController extends Controller
             ], 422);
         }
 
-        $count = 0;
+        $created = 0;
+        $updated = 0;
         $errors = [];
-        $duplicates = [];
 
         foreach ($request->data as $index => $row) {
             try {
                 $kodeAset = $row['kode_aset'] ?? '';
-
-                if (Barang::where('kode_aset', $kodeAset)->exists()) {
-                    $duplicates[] = $kodeAset;
-                    continue;
-                }
-
-                $barang = Barang::create([
-                    'kode_aset' => $kodeAset,
+                $newData = [
                     'kode_barang' => $row['kode_barang'] ?? '',
                     'nama_aset' => $row['nama_aset'] ?? '',
                     'jenis_aset' => $row['jenis_aset'] ?? '',
@@ -258,29 +251,65 @@ class BarangController extends Controller
                     'lokasi_penyimpanan' => $row['lokasi_penyimpanan'] ?? '',
                     'penanggung_jawab' => $row['penanggung_jawab'] ?? '',
                     'tahun_perolehan' => (int)($row['tahun_perolehan'] ?? date('Y')),
-                ]);
+                ];
 
-                Riwayat::create([
-                    'kode_barang' => $barang->kode_barang,
-                    'nama_aset' => $barang->nama_aset,
-                    'perubahan' => 'Tambah Data (Import)',
-                    'stok_sebelum' => 0,
-                    'stok_sesudah' => $barang->jumlah,
-                    'keterangan' => 'Import dari Excel',
-                ]);
+                $existing = Barang::where('kode_aset', $kodeAset)->first();
 
-                $count++;
+                if ($existing) {
+                    // Update data yang sudah ada
+                    $stokSebelum = $existing->jumlah;
+                    $existing->update($newData);
+
+                    $stokSesudah = $existing->jumlah;
+                    $selisihStok = $stokSesudah - $stokSebelum;
+
+                    if ($stokSebelum != $stokSesudah) {
+                        $tanda = $selisihStok > 0 ? '+' : '';
+                        $perubahan = "Edit Stok ({$tanda}{$selisihStok}) (Import)";
+                    } else {
+                        $perubahan = 'Edit Data (Import)';
+                    }
+
+                    Riwayat::create([
+                        'kode_barang' => $existing->kode_barang,
+                        'nama_aset' => $existing->nama_aset,
+                        'perubahan' => $perubahan,
+                        'stok_sebelum' => $stokSebelum,
+                        'stok_sesudah' => $stokSesudah,
+                        'keterangan' => 'Update dari Import Excel',
+                    ]);
+
+                    $updated++;
+                } else {
+                    // Buat data baru
+                    $barang = Barang::create(array_merge(['kode_aset' => $kodeAset], $newData));
+
+                    Riwayat::create([
+                        'kode_barang' => $barang->kode_barang,
+                        'nama_aset' => $barang->nama_aset,
+                        'perubahan' => 'Tambah Data (Import)',
+                        'stok_sebelum' => 0,
+                        'stok_sesudah' => $barang->jumlah,
+                        'keterangan' => 'Import dari Excel',
+                    ]);
+
+                    $created++;
+                }
             } catch (\Exception $e) {
                 $errors[] = "Baris " . ($index + 1) . ": " . $e->getMessage();
             }
         }
 
+        $total = $created + $updated;
+        $message = "Berhasil import: {$created} data baru, {$updated} data diupdate";
+
         return response()->json([
             'success' => true,
-            'message' => "Berhasil import $count data",
-            'count' => $count,
+            'message' => $message,
+            'count' => $total,
+            'created' => $created,
+            'updated' => $updated,
             'errors' => $errors,
-            'duplicates' => $duplicates
         ]);
     }
 

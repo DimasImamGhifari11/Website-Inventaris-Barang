@@ -325,18 +325,14 @@ const uploadExcel = async () => {
     const response = await api.post('/barang/import', { data })
     uploadSuccess.value = true
 
-    // Show success with duplicate/error info
-    const successCount = response.data.count
+    // Show success message from backend
     const errorCount = response.data.errors?.length || 0
-    const duplicates = response.data.duplicates || []
 
-    if (duplicates.length > 0) {
-      showNotification(`Berhasil import ${successCount} data. ${duplicates.length} dilewati (kode aset sudah ada)`, 'warning')
-    } else if (errorCount > 0) {
+    if (errorCount > 0) {
       console.log('Import errors:', response.data.errors)
-      showNotification(`Berhasil import ${successCount} data, ${errorCount} gagal`, 'warning')
+      showNotification(`${response.data.message}, ${errorCount} gagal`, 'warning')
     } else {
-      showNotification(`Berhasil import ${successCount} data`)
+      showNotification(response.data.message)
     }
 
     selectedFile.value = null

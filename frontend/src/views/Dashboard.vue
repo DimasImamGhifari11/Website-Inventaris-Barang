@@ -242,15 +242,15 @@ const cancelLogout = () => {
 }
 
 .sidebar-footer {
-  padding: 16px 24px;
+  padding: 16px 0;
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
-.footer-nav {
-  margin-bottom: 8px;
+.sidebar-footer .dark-mode-toggle {
+  padding: 4px 24px;
 }
 
 .dark-mode-toggle {

@@ -755,6 +755,24 @@ onMounted(() => {
   gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid var(--border-light);
+  animation: activitySlideIn 0.4s ease-out both;
+}
+
+.activity-item:nth-child(1) { animation-delay: 0.15s; }
+.activity-item:nth-child(2) { animation-delay: 0.3s; }
+.activity-item:nth-child(3) { animation-delay: 0.45s; }
+.activity-item:nth-child(4) { animation-delay: 0.6s; }
+.activity-item:nth-child(5) { animation-delay: 0.75s; }
+
+@keyframes activitySlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .activity-item:last-child {
@@ -1334,26 +1352,84 @@ tbody tr:hover {
     padding: 16px;
   }
 
+  .activity-item {
+    gap: 10px;
+    padding: 10px 0;
+  }
+
+  .activity-name {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    font-size: 12px;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .activity-detail {
+    font-size: 11px;
+  }
+
+  .activity-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .activity-icon svg {
+    width: 12px;
+    height: 12px;
+  }
+
   .activity-badge {
     display: none;
   }
 
   .donut {
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
   }
 
   .donut-hole {
-    width: 100px;
-    height: 100px;
+    width: 86px;
+    height: 86px;
   }
 
   .donut-total {
-    font-size: 24px;
+    font-size: 22px;
+  }
+
+  .donut-total-label {
+    font-size: 10px;
   }
 
   .chart-legend {
     width: 100%;
+  }
+
+  .legend-item {
+    gap: 8px;
+  }
+
+  .legend-label {
+    font-size: 12px;
+    min-width: 80px;
+  }
+
+  .legend-value {
+    font-size: 12px;
+  }
+
+  .legend-percent {
+    font-size: 11px;
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
   }
 
   .data-section {
