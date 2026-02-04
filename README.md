@@ -10,15 +10,20 @@ Aplikasi pengelolaan data inventaris barang untuk Dinas Komunikasi Informatika d
 
 ## Fitur
 
-- Login & Autentikasi
+- Login & Autentikasi (Laravel Sanctum)
+- Dashboard Statistik (Total Aset, Total Unit, Total Aktivitas, Kondisi Baik)
+- Donut chart kondisi barang dengan animasi fill
+- Aktivitas Terbaru (5 log terakhir di dashboard)
 - CRUD Data Barang
 - Import data dari file Excel (drag & drop)
 - Export data ke Excel
-- Pencarian real-time
-- Pagination
+- Bulk Delete (hapus banyak data sekaligus)
+- Pencarian real-time (kode aset, kode barang, nama aset, penanggung jawab)
+- Pagination (10, 25, 50, 100, 250 per halaman)
 - Generate label barang (PNG) dengan kode barang & tahun pengadaan
 - Riwayat aktivitas
-- Dark mode / Light mode (tersimpan di localStorage)
+- Manajemen Akun (ganti username & password)
+- Dark mode / Light mode dengan transisi smooth (tersimpan di localStorage)
 - Responsive design (desktop, tablet, mobile)
 
 ## Instalasi
@@ -105,17 +110,23 @@ Akses aplikasi di `http://localhost:5173`
 | Method | Endpoint | Deskripsi |
 |--------|----------|-----------|
 | POST | /api/login | Login |
+| POST | /api/logout | Logout (hapus token) |
+| GET | /api/user | Get profil user |
+| PUT | /api/akun | Update username/password |
+| GET | /api/statistik | Get statistik dashboard |
 | GET | /api/barang | Get semua data (pagination) |
 | POST | /api/barang | Tambah data |
 | GET | /api/barang/{id} | Get detail |
 | PUT | /api/barang/{id} | Update data |
 | DELETE | /api/barang/{id} | Hapus data |
 | POST | /api/barang/import | Import dari Excel |
+| POST | /api/barang/bulk-delete | Hapus banyak data |
+| GET | /api/riwayat | Get riwayat aktivitas (pagination) |
 
 **Query Parameters untuk GET /api/barang:**
 - `page` - Nomor halaman
 - `per_page` - Data per halaman (default: 10)
-- `search` - Kata kunci pencarian
+- `search` - Kata kunci pencarian (kode aset, kode barang, nama aset, penanggung jawab)
 
 ## Struktur Project
 
@@ -159,7 +170,8 @@ Inventaris-Barang/
 │  │  │  ├─ UpdateForm.vue
 │  │  │  ├─ HapusData.vue
 │  │  │  ├─ Riwayat.vue
-│  │  │  └─ GenerateLabel.vue
+│  │  │  ├─ GenerateLabel.vue
+│  │  │  └─ Akun.vue
 │  │  ├─ router/
 │  │  │  └─ index.js                  # Routing + route guard (cek token)
 │  │  ├─ components/
@@ -203,19 +215,26 @@ php artisan test --filter=BarangTest
 
 ### Test Cases
 
-**White Box Testing (30 tests):**
+**White Box Testing (53 tests):**
 - CREATE Positive: 5 tests
 - CREATE Negative: 5 tests
 - READ Positive: 5 tests
 - UPDATE Positive: 5 tests
 - UPDATE Negative: 5 tests
 - DELETE Positive: 5 tests
+- Statistik & Dashboard: 6 tests
+- Akun Positive: 3 tests
+- Akun Negative: 4 tests
+- Search: 6 tests
+- Bulk Delete: 4 tests
 
 **Black Box Testing - Boundary Value Analysis (10 tests):**
 - Jumlah: minimum valid, below minimum, negatif
 - Tahun perolehan: minimum valid, below minimum, maximum valid, above maximum
 - Kode aset: empty string
 - Nama aset: panjang minimum, panjang maksimum
+
+**Total: 63 tests, 179 assertions**
 
 Lihat file `TEST_CASES.md` untuk dokumentasi lengkap test cases.
 
