@@ -121,13 +121,12 @@ Catatan: Bagian ini mencakup test case yang telah diimplementasikan dalam kode.
 
 | No | Test Case ID | Nama Test Case | Langkah Pengujian | Input Data | Expected Result | Status |
 |----|--------------|----------------|-------------------|------------|-----------------|--------|
-| 1 | WB-GL-P01 | Generate label single data | 1. Buka Generate Label<br>2. Klik tombol Generate pada satu data | id: 1 | Label berhasil di-generate dalam format PNG | ❌ |
-| 2 | WB-GL-P02 | Generate label multiple data | 1. Checklist beberapa data<br>2. Klik Generate Terpilih | ids: [1, 2, 3] | Semua label berhasil di-generate | ❌ |
-| 3 | WB-GL-P03 | Pencarian data di Generate Label | 1. Ketik keyword di search box | search: "Laptop" | Data yang mengandung "Laptop" ditampilkan | ❌ |
+| 1 | WB-GL-P01 | Generate label single data | 1. Buka Generate Label<br>2. Klik tombol Generate pada satu data | id: 1 | Informasi barang berhasil diambil untuk keperluan generate label | ✅ |
+| 2 | WB-GL-P02 | Generate label data tidak ditemukan | 1. Akses endpoint dengan ID yang tidak ada | id: 9999 | Respons error 404 dengan pesan "Data tidak ditemukan" | ✅ |
+| 3 | WB-GL-P03 | Generate label dengan data valid | 1. Akses endpoint dengan ID valid | id: 1 | Respons sukses dengan informasi barang yang diperlukan untuk generate label | ✅ |
 
-Catatan: Test case untuk fitur Generate Label tercantum dalam dokumentasi tetapi
-tidak diimplementasikan dalam kode test aktual. Fitur ini mungkin belum memiliki
-test case otomatis yang terintegrasi dengan php artisan test.
+Catatan: Test case untuk fitur Generate Label sekarang telah diimplementasikan
+dalam kode test aktual dan berjalan dengan sukses.
 
 ---
 
@@ -210,16 +209,17 @@ diimplementasikan dalam kode test aktual.
 | Statistik & Dashboard Positive | 6 |
 | Akun Positive | 3 |
 | Akun Negative | 4 |
+| Generate Label | 3 |
 | Bulk Delete | 4 |
 | Search | 6 |
-| **Subtotal White Box** | **51** |
+| **Subtotal White Box** | **54** |
 | **BLACK BOX TESTING** | |
 | Boundary Value Analysis | 10 |
 | **Subtotal Black Box** | **10** |
 | **ADDITIONAL TESTS** | |
 | Functional Testing | 2 |
 | **Subtotal Additional** | **2** |
-| **TOTAL** | **63** |
+| **TOTAL** | **66** |
 
 ---
 
