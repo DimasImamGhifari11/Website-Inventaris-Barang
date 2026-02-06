@@ -22,6 +22,7 @@ class Barang extends Model
         'penanggung_jawab',
         'tahun_perolehan',
         'keterangan',
+        'gambar',
     ];
 
     protected $casts = [

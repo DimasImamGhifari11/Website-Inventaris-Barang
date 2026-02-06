@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Barang;
 use App\Models\Riwayat;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
@@ -76,6 +77,7 @@ class BarangController extends Controller
             'lokasi_penyimpanan' => 'required|string',
             'penanggung_jawab' => 'required|string',
             'tahun_perolehan' => 'required|integer|min:2000|max:' . date('Y'),
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -86,7 +88,17 @@ class BarangController extends Controller
             ], 422);
         }
 
-        $barang = Barang::create($request->all());
+        $data = $request->except('gambar');
+
+        // Handle image upload
+        if ($request->hasFile('gambar')) {
+            $file = $request->file('gambar');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('gambar_barang', $filename, 'public');
+            $data['gambar'] = $filename;
+        }
+
+        $barang = Barang::create($data);
 
         // Log riwayat tambah data
         Riwayat::create([
@@ -143,6 +155,7 @@ class BarangController extends Controller
             'lokasi_penyimpanan' => 'required|string',
             'penanggung_jawab' => 'required|string',
             'tahun_perolehan' => 'required|integer|min:2000|max:' . date('Y'),
+            'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
         ]);
 
         if ($validator->fails()) {
@@ -155,21 +168,55 @@ class BarangController extends Controller
 
         // Simpan data sebelum update untuk riwayat
         $stokSebelum = $barang->jumlah;
-        $namaAsetLama = $barang->nama_aset;
-        $kodeBarangLama = $barang->kode_barang;
+        $gambarSebelum = $barang->gambar;
 
-        $barang->update($request->all());
+        $data = $request->except(['gambar', 'hapus_gambar']);
+
+        // Handle hapus gambar
+        if ($request->boolean('hapus_gambar')) {
+            if ($gambarSebelum && Storage::disk('public')->exists('gambar_barang/' . $gambarSebelum)) {
+                Storage::disk('public')->delete('gambar_barang/' . $gambarSebelum);
+            }
+            $data['gambar'] = null;
+        }
+
+        // Handle upload gambar baru
+        if ($request->hasFile('gambar')) {
+            // Hapus gambar lama jika ada
+            if ($gambarSebelum && Storage::disk('public')->exists('gambar_barang/' . $gambarSebelum)) {
+                Storage::disk('public')->delete('gambar_barang/' . $gambarSebelum);
+            }
+            $file = $request->file('gambar');
+            $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+            $file->storeAs('gambar_barang', $filename, 'public');
+            $data['gambar'] = $filename;
+        }
+
+        $barang->update($data);
 
         // Tentukan jenis perubahan
         $stokSesudah = $barang->jumlah;
         $selisihStok = $stokSesudah - $stokSebelum;
+        $perubahanList = [];
 
         if ($stokSebelum != $stokSesudah) {
-            // Stok berubah
             $tanda = $selisihStok > 0 ? '+' : '';
-            $perubahan = "Edit Stok ({$tanda}{$selisihStok})";
-        } else {
+            $perubahanList[] = "Edit Stok ({$tanda}{$selisihStok})";
+        }
+
+        // Cek perubahan gambar
+        if (!$gambarSebelum && $barang->gambar) {
+            $perubahanList[] = 'Tambah Gambar';
+        } elseif ($gambarSebelum && !$barang->gambar) {
+            $perubahanList[] = 'Hapus Gambar';
+        } elseif ($gambarSebelum && $barang->gambar && $gambarSebelum !== $barang->gambar) {
+            $perubahanList[] = 'Ubah Gambar';
+        }
+
+        if (empty($perubahanList)) {
             $perubahan = 'Edit Data';
+        } else {
+            $perubahan = implode(', ', $perubahanList);
         }
 
         // Log riwayat update
@@ -198,6 +245,11 @@ class BarangController extends Controller
                 'success' => false,
                 'message' => 'Data tidak ditemukan'
             ], 404);
+        }
+
+        // Hapus gambar jika ada
+        if ($barang->gambar && Storage::disk('public')->exists('gambar_barang/' . $barang->gambar)) {
+            Storage::disk('public')->delete('gambar_barang/' . $barang->gambar);
         }
 
         // Log riwayat hapus data sebelum dihapus
@@ -334,6 +386,11 @@ class BarangController extends Controller
         foreach ($ids as $id) {
             $barang = Barang::find($id);
             if ($barang) {
+                // Hapus gambar jika ada
+                if ($barang->gambar && Storage::disk('public')->exists('gambar_barang/' . $barang->gambar)) {
+                    Storage::disk('public')->delete('gambar_barang/' . $barang->gambar);
+                }
+
                 // Log riwayat hapus data
                 Riwayat::create([
                     'kode_barang' => $barang->kode_barang,

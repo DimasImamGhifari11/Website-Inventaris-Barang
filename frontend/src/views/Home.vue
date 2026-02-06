@@ -171,6 +171,7 @@
             <thead>
               <tr>
                 <th>No</th>
+                <th class="center-col">Gambar</th>
                 <th>Kode Aset</th>
                 <th>Kode Barang</th>
                 <th>Nama Aset</th>
@@ -185,6 +186,26 @@
             <tbody>
               <tr v-for="(item, index) in barangList" :key="item.id">
                 <td>{{ getRowNumber(index) }}</td>
+                <td class="center-col">
+                  <div class="image-cell">
+                    <img
+                      v-if="hasValidImage(item)"
+                      :src="getImageUrl(item.gambar)"
+                      :alt="item.nama_aset"
+                      class="table-image"
+                      @click="openImageModal(item)"
+                      @error="onImageError(item)"
+                      loading="lazy"
+                    />
+                    <div v-else class="no-image">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                        <polyline points="21 15 16 10 5 21"></polyline>
+                      </svg>
+                    </div>
+                  </div>
+                </td>
                 <td>{{ item.kode_aset }}</td>
                 <td>{{ item.kode_barang }}</td>
                 <td>{{ item.nama_aset }}</td>
@@ -261,6 +282,22 @@
         <span>{{ notification.message }}</span>
       </div>
     </Transition>
+
+    <!-- Image Modal -->
+    <Transition name="modal">
+      <div v-if="imageModal.show" class="image-modal-overlay" @click="closeImageModal">
+        <div class="image-modal-content" @click.stop>
+          <button class="modal-close" @click="closeImageModal">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </button>
+          <img :src="getImageUrl(imageModal.item?.gambar)" :alt="imageModal.item?.nama_aset" />
+          <div class="modal-caption">{{ imageModal.item?.nama_aset }}</div>
+        </div>
+      </div>
+    </Transition>
   </div>
 </template>
 
@@ -292,11 +329,43 @@ const notification = ref({
   type: 'success'
 })
 
+const imageModal = ref({
+  show: false,
+  item: null
+})
+
+const failedImages = ref(new Set())
+
 const showNotification = (message, type = 'success') => {
   notification.value = { show: true, message, type }
   setTimeout(() => {
     notification.value.show = false
   }, 3000)
+}
+
+const getImageUrl = (filename) => {
+  if (!filename) return ''
+  let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  baseUrl = baseUrl.replace(/\/api\/?$/, '')
+  return `${baseUrl}/storage/gambar_barang/${filename}`
+}
+
+const onImageError = (item) => {
+  failedImages.value.add(item.id)
+}
+
+const hasValidImage = (item) => {
+  return item.gambar && !failedImages.value.has(item.id)
+}
+
+const openImageModal = (item) => {
+  if (item.gambar) {
+    imageModal.value = { show: true, item }
+  }
+}
+
+const closeImageModal = () => {
+  imageModal.value = { show: false, item: null }
 }
 
 const pagination = ref({
@@ -414,6 +483,7 @@ const fetchStatistik = async () => {
 
 const fetchBarang = async (page = 1) => {
   loading.value = true
+  failedImages.value.clear()
   try {
     let url = `/barang?page=${page}&per_page=10`
     if (searchQuery.value) {
@@ -1201,6 +1271,136 @@ tbody tr:hover {
     opacity: 0;
     transform: translateX(-50%) translateY(-20px);
   }
+}
+
+/* Table Image */
+.image-cell {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 4px 0;
+}
+
+.table-image {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--bg-primary);
+}
+
+.table-image:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+}
+
+.no-image {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+  border-radius: 8px;
+  color: var(--text-secondary);
+  border: 1px dashed var(--border-color);
+  opacity: 0.6;
+}
+
+.no-image svg {
+  opacity: 0.5;
+}
+
+/* Image Modal */
+.image-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.image-modal-content {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image-modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 12px;
+  object-fit: contain;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: -45px;
+  right: -5px;
+  width: 36px;
+  height: 36px;
+  background: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.modal-caption {
+  margin-top: 16px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 14px;
+  font-weight: 500;
+  text-align: center;
+  max-width: 80%;
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .image-modal-content,
+.modal-leave-active .image-modal-content {
+  transition: transform 0.3s ease;
+}
+
+.modal-enter-from .image-modal-content {
+  transform: scale(0.9);
+}
+
+.modal-leave-to .image-modal-content {
+  transform: scale(0.9);
 }
 
 /* Tablet */

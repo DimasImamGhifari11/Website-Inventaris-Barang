@@ -78,6 +78,44 @@
           <span class="form-hint">Catatan: Kolom ini untuk mencatat informasi perubahan yang dilakukan</span>
         </div>
 
+        <div class="form-group">
+          <label>Gambar Barang</label>
+          <div
+            class="image-dropzone"
+            :class="{ 'dropzone-active': isImageDragging, 'has-image': imagePreview || currentImage }"
+            @dragover.prevent="isImageDragging = true"
+            @dragleave.prevent="isImageDragging = false"
+            @drop.prevent="handleImageDrop"
+            @click="triggerImageInput"
+          >
+            <input
+              type="file"
+              ref="imageInput"
+              @change="handleImageSelect"
+              accept="image/jpeg,image/png,image/jpg,image/gif,image/webp"
+              hidden
+            />
+            <div v-if="!imagePreview && !currentImage" class="dropzone-content">
+              <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                <polyline points="21 15 16 10 5 21"></polyline>
+              </svg>
+              <p>Drag & drop gambar atau <span>browse</span></p>
+              <span class="file-hint">Format: JPG, PNG, GIF, WebP (Max 2MB)</span>
+            </div>
+            <div v-else class="image-preview">
+              <img :src="imagePreview || getImageUrl(currentImage)" alt="Preview" />
+              <button type="button" class="remove-image" @click.stop="removeImage">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="18" y1="6" x2="6" y2="18"></line>
+                  <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
         <div class="form-actions">
           <button type="button" class="btn btn-secondary" @click="goBack">Batal</button>
           <button type="submit" class="btn btn-primary" :disabled="submitting">
@@ -136,6 +174,12 @@ const currentYear = new Date().getFullYear()
 const loading = ref(true)
 const submitting = ref(false)
 const asset = ref(null)
+const imageInput = ref(null)
+const selectedImage = ref(null)
+const imagePreview = ref(null)
+const currentImage = ref(null)
+const isImageDragging = ref(false)
+const deleteImage = ref(false)
 
 const form = ref({
   kode_aset: '',
@@ -184,6 +228,8 @@ const fetchAsset = async () => {
         tahun_perolehan: asset.value.tahun_perolehan,
         keterangan: ''
       }
+      // Set current image
+      currentImage.value = asset.value.gambar || null
       // Simpan data asli untuk perbandingan
       originalData.value = {
         kode_aset: asset.value.kode_aset,
@@ -194,7 +240,8 @@ const fetchAsset = async () => {
         kondisi: asset.value.kondisi,
         lokasi_penyimpanan: asset.value.lokasi_penyimpanan,
         penanggung_jawab: asset.value.penanggung_jawab,
-        tahun_perolehan: asset.value.tahun_perolehan
+        tahun_perolehan: asset.value.tahun_perolehan,
+        gambar: asset.value.gambar || null
       }
     }
   } catch (error) {
@@ -208,6 +255,8 @@ const fetchAsset = async () => {
 
 const hasChanges = () => {
   if (!originalData.value) return false
+  // Check if image changed
+  const imageChanged = selectedImage.value !== null || deleteImage.value
   return (
     form.value.kode_aset !== originalData.value.kode_aset ||
     form.value.kode_barang !== originalData.value.kode_barang ||
@@ -217,8 +266,69 @@ const hasChanges = () => {
     form.value.kondisi !== originalData.value.kondisi ||
     form.value.lokasi_penyimpanan !== originalData.value.lokasi_penyimpanan ||
     form.value.penanggung_jawab !== originalData.value.penanggung_jawab ||
-    Number(form.value.tahun_perolehan) !== Number(originalData.value.tahun_perolehan)
+    Number(form.value.tahun_perolehan) !== Number(originalData.value.tahun_perolehan) ||
+    imageChanged
   )
+}
+
+const getImageUrl = (filename) => {
+  if (!filename) return ''
+  let baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000'
+  // Remove /api suffix if present
+  baseUrl = baseUrl.replace(/\/api\/?$/, '')
+  return `${baseUrl}/storage/gambar_barang/${filename}`
+}
+
+const triggerImageInput = () => {
+  imageInput.value.click()
+}
+
+const handleImageSelect = (event) => {
+  const file = event.target.files[0]
+  if (file) {
+    validateAndSetImage(file)
+  }
+}
+
+const handleImageDrop = (event) => {
+  isImageDragging.value = false
+  const file = event.dataTransfer.files[0]
+  if (file) {
+    validateAndSetImage(file)
+  }
+}
+
+const validateAndSetImage = (file) => {
+  const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/webp']
+  if (!validTypes.includes(file.type)) {
+    showNotification('Format gambar harus JPG, PNG, GIF, atau WebP', 'error')
+    return
+  }
+  if (file.size > 2 * 1024 * 1024) {
+    showNotification('Ukuran gambar maksimal 2MB', 'error')
+    return
+  }
+  selectedImage.value = file
+  deleteImage.value = false
+  currentImage.value = null
+  const reader = new FileReader()
+  reader.onload = (e) => {
+    imagePreview.value = e.target.result
+  }
+  reader.readAsDataURL(file)
+}
+
+const removeImage = () => {
+  if (selectedImage.value) {
+    selectedImage.value = null
+    imagePreview.value = null
+  } else if (currentImage.value) {
+    deleteImage.value = true
+    currentImage.value = null
+  }
+  if (imageInput.value) {
+    imageInput.value.value = ''
+  }
 }
 
 const submitForm = async () => {
@@ -231,7 +341,22 @@ const submitForm = async () => {
   submitting.value = true
   try {
     const id = route.params.id
-    await api.put(`/barang/${id}`, form.value)
+    const formData = new FormData()
+    formData.append('_method', 'PUT')
+    Object.keys(form.value).forEach(key => {
+      formData.append(key, form.value[key])
+    })
+    if (selectedImage.value) {
+      formData.append('gambar', selectedImage.value)
+    }
+    if (deleteImage.value) {
+      formData.append('hapus_gambar', '1')
+    }
+    await api.post(`/barang/${id}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
     showNotification('Data berhasil diupdate')
     setTimeout(() => {
       const page = route.query.page || 1
@@ -375,6 +500,106 @@ onMounted(() => {
   font-size: 12px;
   color: var(--text-secondary);
   margin-top: 4px;
+}
+
+.file-hint {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Image Dropzone */
+.image-dropzone {
+  border: 2px dashed var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-primary);
+}
+
+.image-dropzone:hover {
+  border-color: #0071e3;
+  background: rgba(0, 113, 227, 0.03);
+}
+
+.image-dropzone.dropzone-active {
+  border-color: #0071e3;
+  background: rgba(0, 113, 227, 0.05);
+}
+
+.image-dropzone.has-image {
+  padding: 12px;
+  border-style: solid;
+  border-color: var(--border-color);
+  background: var(--bg-card);
+}
+
+.dropzone-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+.dropzone-content svg {
+  opacity: 0.4;
+}
+
+.dropzone-content p {
+  margin: 0;
+  font-size: 13px;
+}
+
+.dropzone-content p span {
+  color: #0071e3;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.image-preview {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 180px;
+  border-radius: 8px;
+  object-fit: contain;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid var(--border-color);
+}
+
+.remove-image {
+  position: absolute;
+  top: -8px;
+  right: calc(50% - 98px);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #ff3b30;
+  border: 2px solid var(--bg-card);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.remove-image:hover {
+  background: #e0352b;
+  transform: scale(1.1);
 }
 
 .form-actions {

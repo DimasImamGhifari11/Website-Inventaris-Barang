@@ -124,4 +124,27 @@ Route::middleware('auth:sanctum')->group(function () {
             ]
         ]);
     });
+
+    // Generate Label Routes
+    Route::get('/barang/{id}/generate-label', function (string $id) {
+        $barang = \App\Models\Barang::find($id);
+
+        if (!$barang) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data tidak ditemukan'
+            ], 404);
+        }
+
+        // Return basic info needed for label generation
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $barang->id,
+                'kode_barang' => $barang->kode_barang,
+                'tahun_perolehan' => $barang->tahun_perolehan,
+                'nama_aset' => $barang->nama_aset,
+            ]
+        ]);
+    });
 });
