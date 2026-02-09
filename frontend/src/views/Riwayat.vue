@@ -178,7 +178,9 @@ const showNotification = (message, type = 'success') => {
 }
 
 const perPageOptions = [10, 25, 50, 100, 250]
-const selectedPerPage = ref(10)
+// Load saved preferences from localStorage
+const savedPerPage = localStorage.getItem('riwayat_perPage')
+const selectedPerPage = ref(savedPerPage ? parseInt(savedPerPage) : 10)
 const isDropdownOpen = ref(false)
 const dropdownTimeout = ref(null)
 
@@ -196,6 +198,7 @@ const selectOption = (option) => {
   clearTimeout(dropdownTimeout.value)
   if (selectedPerPage.value !== option) {
     selectedPerPage.value = option
+    localStorage.setItem('riwayat_perPage', option.toString())
     handlePerPageChange()
   }
   isDropdownOpen.value = false

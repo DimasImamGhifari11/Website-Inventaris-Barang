@@ -300,8 +300,11 @@ const pagination = ref({
 })
 
 const perPageOptions = [10, 25, 50, 100, 250]
-const selectedPerPage = ref(10)
-const sortBy = ref('nama_aset')
+// Load saved preferences from localStorage
+const savedPerPage = localStorage.getItem('updateData_perPage')
+const savedSortBy = localStorage.getItem('updateData_sortBy')
+const selectedPerPage = ref(savedPerPage ? parseInt(savedPerPage) : 10)
+const sortBy = ref(savedSortBy || 'nama_aset')
 const sortOptions = [
   { value: 'nama_aset', label: 'Nama Aset A-Z' },
   { value: 'kode_barang', label: 'Kode Barang' }
@@ -327,6 +330,7 @@ const selectSortOption = (value) => {
   clearTimeout(sortDropdownTimeout.value)
   if (sortBy.value !== value) {
     sortBy.value = value
+    localStorage.setItem('updateData_sortBy', value)
     handleSortChange()
   }
   isSortDropdownOpen.value = false
@@ -354,6 +358,7 @@ const selectOption = (option) => {
   clearTimeout(dropdownTimeout.value)
   if (selectedPerPage.value !== option) {
     selectedPerPage.value = option
+    localStorage.setItem('updateData_perPage', option.toString())
     handlePerPageChange()
   }
   isDropdownOpen.value = false
