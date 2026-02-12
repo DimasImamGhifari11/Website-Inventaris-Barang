@@ -177,7 +177,7 @@
             </svg>
           </div>
           <h3>Hapus Semua Riwayat?</h3>
-          <p>Tindakan ini akan menghapus seluruh riwayat perubahan data secara permanen dan tidak dapat dibatalkan.</p>
+          <p>Tindakan ini akan menghapus seluruh riwayat perubahan data secara permanen dan tidak dapat di kembalikan.</p>
           <div class="modal-actions">
             <button class="btn-cancel" @click="showDeleteConfirm = false" :disabled="deleting">Batal</button>
             <button class="btn-confirm-delete" @click="deleteAllRiwayat" :disabled="deleting">
